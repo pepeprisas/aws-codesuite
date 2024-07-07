@@ -1,0 +1,11 @@
+{
+    "applicationName": "codedeploy-appserver-api",
+    "deploymentGroupName": "codedeploy-dg-appserver-api",
+    "deploymentConfigName": "CodeDeployDefault.AllAtOnce",
+    "serviceRoleArn": "arn:aws:iam::123456789012:role/CodeDeployServiceRole",
+    "deploymentStyle": {
+        "deploymentType": "IN_PLACE",
+        "deploymentOption": "WITHOUT_TRAFFIC_CONTROL"
+    },
+    "outdatedInstancesStrategy": "UPDATE"
+}

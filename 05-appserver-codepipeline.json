@@ -1,0 +1,105 @@
+{
+    "pipeline": {
+        "name": "codepipeline-appserver-api",
+        "roleArn": "arn:aws:iam::123456789012:role/CodePipelineServiceRole",
+        "artifactStore": {
+            "type": "S3",
+            "location": "prod-s3-codepipeline-artifacts",
+            "encryptionKey": {
+                "id": "arn:aws:kms:eu-west-1:123456789012:key/12c456b8-12c4-56b8-012c-12c456b89012",
+                "type": "KMS"
+            }
+        },
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "CodeCommit",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "BranchName": "master",
+                            "OutputArtifactFormat": "CODE_ZIP",
+                            "PollForSourceChanges": "false",
+                            "RepositoryName": "appserver-api"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "appserver_api_source_output"
+                            }
+                        ],
+                        "inputArtifacts": [],
+                        "roleArn": "arn:aws:iam::123456789012:role/CodePipelineServiceRole",  
+                        "region": "eu-west-1",
+                        "namespace": "SourceVariables"
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "name": "Build",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "provider": "CodeBuild",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "EnvironmentVariables": "[{\"name\":\"env\",\"type\":\"PLAINTEXT\",\"value\":\"prod\"}]",
+                            "ProjectName": "codebuild-appserver-api"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "appserver_api_build_output"
+                            }
+                        ],
+                        "inputArtifacts": [
+                            {
+                                "name": "appserver_api_source_output"
+                            }
+                        ],
+                        "region": "eu-west-1",
+                        "namespace": "BuildVariables"
+                    }
+                ]
+            },
+            {
+                "name": "Deploy",
+                "actions": [
+                    {
+                        "name": "Deploy",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "CodeDeploy",
+                            "version": "1"
+                        },
+                        "runOrder": 2,
+                        "configuration": {
+                            "ApplicationName": "codedeploy-appserver-api",
+                            "DeploymentGroupName": "codedeploy-dg-appserver-api"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "appserver_api_build_output"
+                            }
+                        ],
+                        "region": "eu-west-1",
+                        "namespace": "DeployVariables"
+                    }
+                ]
+            }
+        ],
+        "version": 1
+    }
+}

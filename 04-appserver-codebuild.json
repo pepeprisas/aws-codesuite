@@ -1,0 +1,72 @@
+{
+    "name": "codebuild-appserver-api",
+    "description": "appserver-codebuild",
+    "source": {
+        "type": "CODEPIPELINE",
+        "buildspec": "",
+        "insecureSsl": false
+    },
+    "sourceVersion": "",
+    "artifacts": {
+        "type": "CODEPIPELINE",
+        "overrideArtifactName": false,
+        "encryptionDisabled": false
+    },
+    "cache": {
+        "type": "LOCAL",
+        "modes": [
+            "LOCAL_DOCKER_LAYER_CACHE",
+            "LOCAL_SOURCE_CACHE"
+        ]
+    },
+    "environment": {
+        "type": "LINUX_CONTAINER",
+        "image": "aws/codebuild/standard:4.0",
+        "computeType": "BUILD_GENERAL1_SMALL",
+        "environmentVariables": [{"name":"branch","type":"PLAINTEXT","value":"master"},{"name":"env","type":"PLAINTEXT","value":"prod"}],
+        "privilegedMode": false,
+        "imagePullCredentialsType": "CODEBUILD"
+    },
+    "serviceRole": "arn:aws:iam::123456789012:role/CodeBuildServiceRole",
+    "timeoutInMinutes": 30,
+    "queuedTimeoutInMinutes": 480,
+    "encryptionKey": "arn:aws:kms:eu-west-1:123456789012:key/12c456b8-12c4-56b8-012c-12c456b89012",
+    "tags": [
+        {
+            "key": "Name",
+            "value": "codebuild-appserver-api"
+        },
+        {
+            "key": "Environment",
+            "value": "production"
+        },
+        {
+            "key": "ENV",
+            "value": "prod"
+        }
+    ],
+    "vpcConfig": {
+        "vpcId": "vpc-12345678901234567",
+        "subnets": [
+            "subnet-12345678901234567", 
+            "subnet-12345678901234567"
+        ],
+        "securityGroupIds": [
+            "sg-12345678901234567"
+        ]
+    },
+    "badgeEnabled": false,
+    "logsConfig": {
+        "cloudWatchLogs": {
+            "status": "ENABLED",
+            "groupName": "prod-log-group-appserver-api",
+            "streamName": "prod-log-stream-appserver-api"
+        },
+        "s3Logs": {
+            "status": "ENABLED",
+            "location": "prod-s3-codebuild-build-logs/build-log-appserver-api",
+            "encryptionDisabled": false
+        }
+    },
+    "fileSystemLocations": []
+}
